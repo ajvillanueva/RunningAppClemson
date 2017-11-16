@@ -1,6 +1,7 @@
 package com.example.cj.tigerrun;
 
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -17,6 +18,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -33,6 +36,7 @@ public class Map extends AppCompatActivity implements OnMapReadyCallback {
     private final LatLng mDefaultLocation = new LatLng(34.6834, -82.8374);
 
     private GoogleMap mMap;
+    private Circle circle;
     private CameraPosition mCameraPosition;
     private FusedLocationProviderClient mFusedLocationProviderClient;
 
@@ -158,6 +162,15 @@ public class Map extends AppCompatActivity implements OnMapReadyCallback {
 
         // Get the current location of the device and set the position of the map.
         getDeviceLocation();
+
+        circle = mMap.addCircle(new CircleOptions()
+                .center(new LatLng(34.6781445, -82.8433632))
+                .radius(1000)
+                .strokeWidth(10)
+                .strokeColor(Color.GREEN)
+                .fillColor(Color.argb(128, 255, 0, 0))
+                .clickable(true));
+
 
     }
 
