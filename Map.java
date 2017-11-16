@@ -165,8 +165,8 @@ public class Map extends AppCompatActivity implements OnMapReadyCallback {
 
         circle = mMap.addCircle(new CircleOptions()
                 .center(new LatLng(34.6781445, -82.8433632))
-                .radius(1000)
-                .strokeWidth(10)
+                .radius(5)
+                .strokeWidth(2)
                 .strokeColor(Color.GREEN)
                 .fillColor(Color.argb(128, 255, 0, 0))
                 .clickable(true));
