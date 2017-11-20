@@ -1,5 +1,6 @@
 package com.example.cj.tigerrun;
 
+import android.app.PendingIntent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
@@ -45,7 +46,7 @@ public class Map extends AppCompatActivity implements OnMapReadyCallback {
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private GeofencingClient mGeofencingClient;
     private ArrayList<Geofence> mGeofenceList;
-
+    private PendingIntent mGeofencePendingIntent;
 
     private boolean mLocationPermissionGranted;
     private Location mLastKnownLocation;
@@ -58,10 +59,11 @@ public class Map extends AppCompatActivity implements OnMapReadyCallback {
 
         mGeofencingClient = LocationServices.getGeofencingClient(this);
 
-        if (savedInstanceState != null) {
-            mLastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
-            mCameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
-        }
+        mGeofencePendingIntent = null;
+
+        populateGeofenceList();
+
+        mGeofencingClient = LocationServices.getGeofencingClient(this);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -96,6 +98,16 @@ public class Map extends AppCompatActivity implements OnMapReadyCallback {
                     // Create the geofence.
                     .build());
         }
+    }
+
+    /**
+     * Removes geofences. This method should be called after the user has granted the location
+     * permission.
+     */
+    @SuppressWarnings("MissingPermission")
+    private void removeGeofences() {
+
+        mGeofencingClient.removeGeofences(getGeofencePendingIntent()).addOnCompleteListener(this);
     }
 
     private void getLocationPermission() {
