@@ -14,6 +14,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -41,11 +42,17 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 
-public class Map extends AppCompatActivity implements OnMapReadyCallback {
+public class Map extends AppCompatActivity implements GoogleMap.OnMyLocationButtonClickListener,
+        GoogleMap.OnMyLocationClickListener,
+        OnMapReadyCallback {
 
     public static final String TAG = "Map";
     public static final String GEOFENCE_ID = "MyGeo";
     private static final LatLng CLEMSON = new LatLng(34.67595302874027, -82.83682249577026);
+
+
+    //Geofence data changed to texas update on return
+    private static final LatLng TEXAS = new LatLng(29.5323806, -98.48824230000002);
 
     GoogleApiClient googleApiClient = null;
 
@@ -117,7 +124,7 @@ public class Map extends AppCompatActivity implements OnMapReadyCallback {
         googleApiClient.disconnect();
     }
 
-    private void startLocationMonitoring() {
+/*    private void startLocationMonitoring() {
 
         try{
             LocationRequest locationRequest = LocationRequest.create()
@@ -135,12 +142,12 @@ public class Map extends AppCompatActivity implements OnMapReadyCallback {
             Log.d(TAG, "Security exception");
         }
     }
-
+*/
     private void startGeofenceMonitoring(){
         try{
             Geofence geofence = new Geofence.Builder()
                     .setRequestId(GEOFENCE_ID)
-                    .setCircularRegion(34.67595302874027, -82.83682249577026, 20)
+                    .setCircularRegion(29.5323806, -98.48824230000002, 20)
                     .setExpirationDuration(Geofence.NEVER_EXPIRE)
                     .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
                     .build();
@@ -176,17 +183,37 @@ public class Map extends AppCompatActivity implements OnMapReadyCallback {
     }
 
     @Override
+    public void onMyLocationClick(@NonNull Location location) {
+        Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public boolean onMyLocationButtonClick() {
+        Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
+        // Return false so that we don't consume the event and the default behavior still occurs
+        // (the camera animates to the user's current position).
+        return false;
+    }
+
+    @Override
     public void onMapReady(GoogleMap googleMap) {
-        map = googleMap;
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(CLEMSON, 15));
+        try {
+            map = googleMap;
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(TEXAS, 15));
 
-        Circle circle = map.addCircle(new CircleOptions()
-        .center(CLEMSON)
-                .radius(20)
-                .strokeColor(Color.YELLOW)
-                .fillColor(Color.CYAN));
+            Circle circle = map.addCircle(new CircleOptions()
+                    .center(TEXAS)
+                    .radius(20)
+                    .strokeColor(Color.YELLOW)
+                    .fillColor(Color.CYAN));
 
-        startLocationMonitoring();
+            //startLocationMonitoring();
+            map.setMyLocationEnabled(true);
+            map.setOnMyLocationButtonClickListener(this);
+            map.setOnMyLocationClickListener(this);
+        }catch(SecurityException e){
+
+        }
 
     }
 }
